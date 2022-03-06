@@ -1,7 +1,8 @@
 // ignore_for_file: prefer_const_constructors
 
 import 'package:flutter/material.dart';
-import 'package:gudang_apk/homeAdmin.dart';
+// import 'package:gudang_apk/homeAdmin.dart';
+import 'package:gudang_apk/homeUser.dart';
 // import 'package:gudang_apk/homeUser.dart';
 
 void main() {
@@ -21,7 +22,7 @@ class MyApp extends StatelessWidget {
         
         primarySwatch: Colors.amber,
       ),
-      home: HomeAdmin()
+      home: HomeUser()
     );
   }
 }
