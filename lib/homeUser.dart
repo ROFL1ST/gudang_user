@@ -45,7 +45,7 @@ class _HomeUserState extends State<HomeUser> {
                   stream: (_selectedItem != "" && _selectedItem != null)
                       ? FirebaseFirestore.instance
                           .collection('barang')
-                          .orderBy(_selectedItem, descending: true)
+                          .orderBy(_selectedItem, ascending: true)
                           .snapshots()
                       : (name != "" && name != null)
                           ? FirebaseFirestore.instance
