@@ -43,7 +43,12 @@ class _HomeUserState extends State<HomeUser> {
               children: [
                 SizedBox(height: 40),
                 StreamBuilder<QuerySnapshot<Object?>>(
-                  stream: (_selectedItem == "stock")
+                  stream: (_selectedItem == "tgl_masuk")
+                      ? FirebaseFirestore.instance
+                          .collection('products')
+                          .orderBy("tgl_masuk")
+                          .snapshots()
+                      :(_selectedItem == "stock")
                       ? FirebaseFirestore.instance
                           .collection('products')
                           .orderBy("stock")
