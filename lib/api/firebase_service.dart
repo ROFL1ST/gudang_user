@@ -10,7 +10,7 @@ class Firebase_service {
   FirebaseStorage storage = FirebaseStorage.instance;
   FirebaseFirestore firestore = FirebaseFirestore.instance;
   Stream<QuerySnapshot<Object?>> streamData() {
-    CollectionReference products = firestore.collection("barang");
+    CollectionReference products = firestore.collection("products");
 
     return products.snapshots();
   }

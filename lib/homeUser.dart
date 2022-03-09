@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:gudang_apk/api/firebase_service.dart';
 import 'package:gudang_apk/constants.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
+import 'package:intl/intl.dart';
 
 class HomeUser extends StatefulWidget {
   const HomeUser({Key? key}) : super(key: key);
@@ -42,14 +43,19 @@ class _HomeUserState extends State<HomeUser> {
               children: [
                 SizedBox(height: 40),
                 StreamBuilder<QuerySnapshot<Object?>>(
-                  stream: (_selectedItem != "" && _selectedItem != null)
+                  stream: (_selectedItem == "tgl_masuk")
                       ? FirebaseFirestore.instance
-                          .collection('barang')
-                          .orderBy(_selectedItem, descending: true)
+                          .collection('products')
+                          .orderBy("tgl_masuk")
+                          .snapshots()
+                      :(_selectedItem == "stock")
+                      ? FirebaseFirestore.instance
+                          .collection('products')
+                          .orderBy("stock")
                           .snapshots()
                       : (name != "" && name != null)
                           ? FirebaseFirestore.instance
-                              .collection('barang')
+                              .collection('products')
                               .where("nama_barang", isEqualTo: name)
                               .snapshots()
                           : Firebase_service().streamData(),
@@ -62,6 +68,7 @@ class _HomeUserState extends State<HomeUser> {
                         itemBuilder: (context, index) {
                           Map<String, dynamic> data = listAllData[index].data()!
                               as Map<String, dynamic>;
+
                           return Container(
                             padding: EdgeInsets.only(top: 20, bottom: 20),
                             child: Column(
@@ -84,7 +91,7 @@ class _HomeUserState extends State<HomeUser> {
                                   ),
                                 ),
                                 Text(
-                                  "Tanggal Masuk : ${data["nama_barang"]}",
+                                  "Tanggal Masuk : ${DateFormat.yMMMEd().format(data["tgl_masuk"].toDate())}",
                                   style: TextStyle(
                                     fontSize: 20,
                                     fontWeight: FontWeight.bold,
@@ -162,4 +169,6 @@ class _HomeUserState extends State<HomeUser> {
       name = val.toLowerCase().trim();
     });
   }
+
+ 
 }
