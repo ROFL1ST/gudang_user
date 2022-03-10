@@ -63,7 +63,7 @@ class _HomeUserState extends State<HomeUser> {
                     if (snapshot.connectionState == ConnectionState.active) {
                       var listAllData = snapshot.data!.docs;
                       return Container(
-                        height: 730,
+                        height: 680,
                         child: ListView.builder(
                           shrinkWrap: true,
                           itemCount: listAllData.length,
