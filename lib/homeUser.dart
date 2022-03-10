@@ -62,45 +62,48 @@ class _HomeUserState extends State<HomeUser> {
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.active) {
                       var listAllData = snapshot.data!.docs;
-                      return ListView.builder(
-                        shrinkWrap: true,
-                        itemCount: listAllData.length,
-                        itemBuilder: (context, index) {
-                          Map<String, dynamic> data = listAllData[index].data()!
-                              as Map<String, dynamic>;
+                      return Container(
+                        height: 730,
+                        child: ListView.builder(
+                          shrinkWrap: true,
+                          itemCount: listAllData.length,
+                          itemBuilder: (context, index) {
+                            Map<String, dynamic> data = listAllData[index].data()!
+                                as Map<String, dynamic>;
 
-                          return Container(
-                            padding: EdgeInsets.only(top: 20, bottom: 20),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Image.network(data["gambar"]),
-                                SizedBox(height: 15),
-                                Text(
-                                  "Nama Barang : ${data["nama_barang"]}",
-                                  style: TextStyle(
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold,
+                            return Container(
+                              padding: EdgeInsets.only(top: 20, bottom: 20),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Image.network(data["gambar"]),
+                                  SizedBox(height: 15),
+                                  Text(
+                                    "Nama Barang : ${data["nama_barang"]}",
+                                    style: TextStyle(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold,
+                                    ),
                                   ),
-                                ),
-                                Text(
-                                  "Stok Barang : ${data["stock"]}",
-                                  style: TextStyle(
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold,
+                                  Text(
+                                    "Stok Barang : ${data["stock"]}",
+                                    style: TextStyle(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold,
+                                    ),
                                   ),
-                                ),
-                                Text(
-                                  "Tanggal Masuk : ${DateFormat.yMMMEd().format(data["tgl_masuk"].toDate())}",
-                                  style: TextStyle(
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold,
+                                  Text(
+                                    "Tanggal Masuk : `${DateFormat.yMMMEd().format(data["tgl_masuk"].toDate())}",
+                                    style: TextStyle(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold,
+                                    ),
                                   ),
-                                ),
-                              ],
-                            ),
-                          );
-                        },
+                                ],
+                              ),
+                            );
+                          },
+                        ),
                       );
                     }
                     return const Center(
