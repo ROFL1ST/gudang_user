@@ -16,8 +16,11 @@ class HomeUser extends StatefulWidget {
 }
 
 class _HomeUserState extends State<HomeUser> {
+  TextEditingController tanggalMulai = TextEditingController();
+  TextEditingController tanggalBerakhir = TextEditingController();
   String name = "";
   String _selectedItem = '';
+  String hapus = "";
 
   @override
   Widget build(BuildContext context) {
@@ -43,22 +46,28 @@ class _HomeUserState extends State<HomeUser> {
               children: [
                 SizedBox(height: 40),
                 StreamBuilder<QuerySnapshot<Object?>>(
-                  stream: (_selectedItem == "tgl_masuk")
+                  stream: (_selectedItem == "tgl_custom")
                       ? FirebaseFirestore.instance
                           .collection('products')
                           .orderBy("tgl_masuk")
-                          .snapshots()
-                      :(_selectedItem == "stock")
-                      ? FirebaseFirestore.instance
-                          .collection('products')
-                          .orderBy("stock")
-                          .snapshots()
-                      : (name != "" && name != null)
+                          .startAt([tanggalMulai]).endAt(
+                              [tanggalBerakhir]).snapshots()
+                      : (_selectedItem == "tgl_masuk")
                           ? FirebaseFirestore.instance
                               .collection('products')
-                              .where("nama_barang", isEqualTo: name)
+                              .orderBy("tgl_masuk")
                               .snapshots()
-                          : Firebase_service().streamData(),
+                          : (_selectedItem == "stock")
+                              ? FirebaseFirestore.instance
+                                  .collection('products')
+                                  .orderBy("stock")
+                                  .snapshots()
+                              : (name != "" && name != null)
+                                  ? FirebaseFirestore.instance
+                                      .collection('products')
+                                      .where("nama_barang", isEqualTo: name)
+                                      .snapshots()
+                                  : Firebase_service().streamData(),
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.active) {
                       var listAllData = snapshot.data!.docs;
@@ -68,8 +77,8 @@ class _HomeUserState extends State<HomeUser> {
                           shrinkWrap: true,
                           itemCount: listAllData.length,
                           itemBuilder: (context, index) {
-                            Map<String, dynamic> data = listAllData[index].data()!
-                                as Map<String, dynamic>;
+                            Map<String, dynamic> data = listAllData[index]
+                                .data()! as Map<String, dynamic>;
 
                             return Container(
                               padding: EdgeInsets.only(top: 20, bottom: 20),
@@ -128,7 +137,7 @@ class _HomeUserState extends State<HomeUser> {
         builder: (context) {
           return Container(
             color: Color(0xFF737373),
-            height: 180,
+            height: 250,
             child: Container(
               child: _buildBottomNavigationMenu(),
               decoration: BoxDecoration(
@@ -156,6 +165,120 @@ class _HomeUserState extends State<HomeUser> {
           title: Text('Tanggal masuk'),
           onTap: () => _selectItem('tgl_masuk'),
         ),
+        ListTile(
+          leading: Icon(Icons.date_range),
+          title: Row(
+            children: [
+              Container(
+                width: 100,
+                height: 50,
+                child: TextField(
+                  controller: tanggalMulai,
+                  keyboardType: TextInputType.text,
+                  decoration: InputDecoration(
+                    hintText: "Mulai",
+                    labelText: "Tanggal mulai",
+                    border: OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(10))),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(
+                        color: Colors.black.withOpacity(.5),
+                      ),
+                    ),
+                    labelStyle: TextStyle(
+                      color: Colors.black.withOpacity(.5),
+                    ),
+                  ),
+                ),
+              ),
+              SizedBox(
+                width: 20,
+              ),
+              Text("Sampai"),
+              SizedBox(
+                width: 20,
+              ),
+              Container(
+                width: 100,
+                height: 50,
+                child: TextField(
+                  controller: tanggalBerakhir,
+                  keyboardType: TextInputType.text,
+                  decoration: InputDecoration(
+                    hintText: "Berakhir",
+                    labelText: "Tanggal Berakhir",
+                    border: OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(10))),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(
+                        color: Colors.black.withOpacity(.5),
+                      ),
+                    ),
+                    labelStyle: TextStyle(
+                      color: Colors.black.withOpacity(.5),
+                    ),
+                  ),
+                ),
+              ),
+              Container(
+                padding: EdgeInsets.only(top: 10.0, left: 15.0, right: 20.0),
+                height: 40,
+                width: 90,
+                child: Material(
+                  borderRadius: BorderRadius.circular(10),
+                  shadowColor: kPrimaryColor.withOpacity(0.5),
+                  color: kPrimaryColor,
+                  elevation: 7.0,
+                  child: GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        _selectedItem = "tgl_custom";
+                      });
+                    },
+                    child: Center(
+                      child: Text(
+                        "Submit",
+                        style: TextStyle(
+                            fontSize: 10,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          onTap: () => _selectItem('tgl_masuk'),
+        ),
+        Container(
+          padding: EdgeInsets.only(top: 10.0, left: 15.0, right: 20.0),
+          height: 50,
+          width: 200,
+          child: Material(
+            borderRadius: BorderRadius.circular(10),
+            shadowColor: kPrimaryColor.withOpacity(0.5),
+            color: kPrimaryColor,
+            elevation: 7.0,
+            child: GestureDetector(
+              onTap: () {
+                setState(() {
+                  name = "";
+                  _selectedItem = "";
+                });
+              },
+              child: Center(
+                child: Text(
+                  "Hapus Sort",
+                  style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white),
+                ),
+              ),
+            ),
+          ),
+        ),
       ],
     );
   }
@@ -172,6 +295,4 @@ class _HomeUserState extends State<HomeUser> {
       name = val.toLowerCase().trim();
     });
   }
-
- 
 }
