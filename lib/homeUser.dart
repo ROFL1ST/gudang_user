@@ -22,20 +22,21 @@ class _HomeUserState extends State<HomeUser> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Home User"),
-      ),
+      appBar: AppBar(title: Text("WareHouse App For Users")),
       body: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.fromLTRB(15, 20, 15, 0),
+          padding: EdgeInsets.fromLTRB(20, 20, 15, 0),
           child:
               Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             TextField(
               style: TextStyle(color: Colors.black),
               decoration: InputDecoration(
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(7),
+                ),
+                icon: Icon(Icons.search , size: 34),
                 hintText: "Cari Barang....",
-                hintStyle: TextStyle(fontSize: 20),
-                icon: Icon(Icons.search),
+                hintStyle: TextStyle(fontSize: 15),
               ),
               onChanged: (val) => initiateSearch(val),
             ),
@@ -48,17 +49,17 @@ class _HomeUserState extends State<HomeUser> {
                           .collection('products')
                           .orderBy("tgl_masuk")
                           .snapshots()
-                      :(_selectedItem == "stock")
-                      ? FirebaseFirestore.instance
-                          .collection('products')
-                          .orderBy("stock")
-                          .snapshots()
-                      : (name != "" && name != null)
+                      : (_selectedItem == "stock")
                           ? FirebaseFirestore.instance
                               .collection('products')
-                              .where("nama_barang", isEqualTo: name)
+                              .orderBy("stock")
                               .snapshots()
-                          : Firebase_service().streamData(),
+                          : (name != "" && name != null)
+                              ? FirebaseFirestore.instance
+                                  .collection('products')
+                                  .where("nama_barang", isEqualTo: name)
+                                  .snapshots()
+                              : Firebase_service().streamData(),
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.active) {
                       var listAllData = snapshot.data!.docs;
@@ -68,35 +69,56 @@ class _HomeUserState extends State<HomeUser> {
                           shrinkWrap: true,
                           itemCount: listAllData.length,
                           itemBuilder: (context, index) {
-                            Map<String, dynamic> data = listAllData[index].data()!
-                                as Map<String, dynamic>;
+                            Map<String, dynamic> data = listAllData[index]
+                                .data()! as Map<String, dynamic>;
 
                             return Container(
+                              margin: EdgeInsets.fromLTRB(4, 5, 4, 20),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10),
+                                color: Colors.amber,
+                              ),
                               padding: EdgeInsets.only(top: 20, bottom: 20),
-                              child: Column(
+                              child: Row(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Image.network(data["gambar"]),
-                                  SizedBox(height: 15),
-                                  Text(
-                                    "Nama Barang : ${data["nama_barang"]}",
-                                    style: TextStyle(
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.bold,
-                                    ),
+                                  SizedBox(
+                                    height: 20,
                                   ),
-                                  Text(
-                                    "Stok Barang : ${data["stock"]}",
-                                    style: TextStyle(
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.bold,
-                                    ),
+                                  Image.network(
+                                    data["gambar"],
+                                    height: 250,
+                                    width: 250,
                                   ),
-                                  Text(
-                                    "Tanggal Masuk : `${DateFormat.yMMMEd().format(data["tgl_masuk"].toDate())}",
-                                    style: TextStyle(
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.bold,
+                                  SizedBox(height: 20),
+                                  Container(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          " ${data["nama_barang"]}",
+                                          style: TextStyle(
+                                              fontSize: 21,
+                                              fontWeight: FontWeight.bold,
+                                              fontStyle: FontStyle.italic),
+                                        ),
+                                        Text(
+                                          " Stock: ${data["stock"]}",
+                                          style: TextStyle(
+                                              fontSize: 17,
+                                              fontWeight: FontWeight.w600,
+                                              fontStyle: FontStyle.italic),
+                                        ),
+                                        Text(
+                                          " ${DateFormat.yMMMEd().format(data["tgl_masuk"].toDate())}",
+                                          style: TextStyle(
+                                              fontSize: 17,
+                                              fontWeight: FontWeight.w600,
+                                              fontStyle: FontStyle.italic),
+                                        ),
+                                        SizedBox(height: 30)
+                                      ],
                                     ),
                                   ),
                                 ],
@@ -172,6 +194,4 @@ class _HomeUserState extends State<HomeUser> {
       name = val.toLowerCase().trim();
     });
   }
-
- 
 }
