@@ -25,8 +25,11 @@ class _HomeUserState extends State<HomeUser> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("WareHouse App For Users")),
+      appBar: AppBar(
+        title: Text("WareHouse App For Users", style: TextStyle(fontSize: 23),)  
+        ),
       body: SingleChildScrollView(
+
         child: Padding(
           padding: EdgeInsets.fromLTRB(20, 20, 15, 0),
           child:
@@ -37,7 +40,7 @@ class _HomeUserState extends State<HomeUser> {
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(7),
                 ),
-                icon: Icon(Icons.search , size: 34),
+                icon: Icon(Icons.search, size: 34),
                 hintText: "Cari Barang....",
                 hintStyle: TextStyle(fontSize: 15),
               ),
@@ -48,21 +51,21 @@ class _HomeUserState extends State<HomeUser> {
                 SizedBox(height: 40),
                 StreamBuilder<QuerySnapshot<Object?>>(
                   stream: (_selectedItem == "tgl_masuk")
+                      ? FirebaseFirestore.instance
+                          .collection('products')
+                          .orderBy("tgl_masuk")
+                          .snapshots()
+                      : (_selectedItem == "stock")
                           ? FirebaseFirestore.instance
                               .collection('products')
-                              .orderBy("tgl_masuk")
+                              .orderBy("stock")
                               .snapshots()
-                          : (_selectedItem == "stock")
+                          : (name != "" && name != null)
                               ? FirebaseFirestore.instance
                                   .collection('products')
-                                  .orderBy("stock")
+                                  .where("nama_barang", isEqualTo: name)
                                   .snapshots()
-                              : (name != "" && name != null)
-                                  ? FirebaseFirestore.instance
-                                      .collection('products')
-                                      .where("nama_barang", isEqualTo: name)
-                                      .snapshots()
-                                  : Firebase_service().streamData(),
+                              : Firebase_service().streamData(),
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.active) {
                       var listAllData = snapshot.data!.docs;
