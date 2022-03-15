@@ -5,6 +5,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:gudang_apk/api/firebase_service.dart';
 import 'package:gudang_apk/constants.dart';
+import 'package:gudang_apk/search.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:intl/intl.dart';
 
@@ -18,9 +19,9 @@ class HomeUser extends StatefulWidget {
 class _HomeUserState extends State<HomeUser> {
   TextEditingController tanggalMulai = TextEditingController();
   TextEditingController tanggalBerakhir = TextEditingController();
-  String name = "";
-  String _selectedItem = '';
-  String hapus = "";
+  TextEditingController searchController = TextEditingController();
+
+ 
 
   @override
   Widget build(BuildContext context) {
@@ -32,37 +33,27 @@ class _HomeUserState extends State<HomeUser> {
           child:
               Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             TextField(
+                onSubmitted: ((value) => Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        Search(search: value)))),
+              controller: searchController,
               style: TextStyle(color: Colors.black),
               decoration: InputDecoration(
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(7),
                 ),
-                icon: Icon(Icons.search , size: 34),
+                icon: Icon(Icons.search, size: 34),
                 hintText: "Cari Barang....",
                 hintStyle: TextStyle(fontSize: 15),
               ),
-              onChanged: (val) => initiateSearch(val),
             ),
             Column(
               children: [
                 SizedBox(height: 40),
                 StreamBuilder<QuerySnapshot<Object?>>(
-                  stream: (_selectedItem == "tgl_masuk")
-                          ? FirebaseFirestore.instance
-                              .collection('products')
-                              .orderBy("tgl_masuk")
-                              .snapshots()
-                          : (_selectedItem == "stock")
-                              ? FirebaseFirestore.instance
-                                  .collection('products')
-                                  .orderBy("stock")
-                                  .snapshots()
-                              : (name != "" && name != null)
-                                  ? FirebaseFirestore.instance
-                                      .collection('products')
-                                      .where("nama_barang", isEqualTo: name)
-                                      .snapshots()
-                                  : Firebase_service().streamData(),
+                  stream: Firebase_service().streamData(),
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.active) {
                       var listAllData = snapshot.data!.docs;
@@ -248,7 +239,7 @@ class _HomeUserState extends State<HomeUser> {
                   child: GestureDetector(
                     onTap: () {
                       setState(() {
-                        _selectedItem = "tgl_custom";
+                    
                       });
                     },
                     child: Center(
@@ -279,8 +270,8 @@ class _HomeUserState extends State<HomeUser> {
             child: GestureDetector(
               onTap: () {
                 setState(() {
-                  name = "";
-                  _selectedItem = "";
+                
+               
                 });
               },
               child: Center(
@@ -302,13 +293,7 @@ class _HomeUserState extends State<HomeUser> {
   void _selectItem(String name) {
     Navigator.pop(context);
     setState(() {
-      _selectedItem = name;
-    });
-  }
-
-  void initiateSearch(String val) {
-    setState(() {
-      name = val.toLowerCase().trim();
+      
     });
   }
 }

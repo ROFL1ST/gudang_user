@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:gudang_apk/homeUser.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:gudang_apk/splash_screen.dart';
 // import 'package:gudang_apk/homeUser.dart';
 
 void main() async {
@@ -28,7 +29,7 @@ class MyApp extends StatelessWidget {
         
         primarySwatch: Colors.amber,
       ),
-      home: HomeUser()
+      home: SplashScreenView()
     );
   }
 }
