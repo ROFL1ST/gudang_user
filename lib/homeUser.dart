@@ -20,29 +20,31 @@ class _HomeUserState extends State<HomeUser> {
   TextEditingController tanggalMulai = TextEditingController();
   TextEditingController tanggalBerakhir = TextEditingController();
   TextEditingController searchController = TextEditingController();
-
- 
+  String _selectedItem = "";
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("WareHouse App For Users")),
+      appBar: AppBar(
+          title: Text(
+        "WareHouse App For Users",
+        style: TextStyle(fontSize: 23, color: Colors.white),
+      )),
       body: SingleChildScrollView(
         child: Padding(
-          padding: EdgeInsets.fromLTRB(20, 20, 15, 0),
+          padding: EdgeInsets.fromLTRB(20, 20, 35, 10),
           child:
               Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             TextField(
-                onSubmitted: ((value) => Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) =>
-                                        Search(search: value)))),
+              onSubmitted: ((value) => Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => Search(search: value)))),
               controller: searchController,
               style: TextStyle(color: Colors.black),
               decoration: InputDecoration(
                 border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(7),
+                  borderRadius: BorderRadius.circular(5),
                 ),
                 icon: Icon(Icons.search, size: 34),
                 hintText: "Cari Barang....",
@@ -51,9 +53,19 @@ class _HomeUserState extends State<HomeUser> {
             ),
             Column(
               children: [
-                SizedBox(height: 40),
+                SizedBox(height: 20),
                 StreamBuilder<QuerySnapshot<Object?>>(
-                  stream: Firebase_service().streamData(),
+                  stream: (_selectedItem == "tgl_masuk")
+                      ? FirebaseFirestore.instance
+                          .collection('products')
+                          .orderBy("tgl_masuk")
+                          .snapshots()
+                      : (_selectedItem == "stock")
+                          ? FirebaseFirestore.instance
+                              .collection('products')
+                              .orderBy("stock")
+                              .snapshots()
+                          : Firebase_service().streamData(),
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.active) {
                       var listAllData = snapshot.data!.docs;
@@ -66,58 +78,73 @@ class _HomeUserState extends State<HomeUser> {
                             Map<String, dynamic> data = listAllData[index]
                                 .data()! as Map<String, dynamic>;
 
-                            return Container(
-                              margin: EdgeInsets.fromLTRB(4, 5, 4, 20),
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10),
-                                color: Colors.amber,
-                              ),
-                              padding: EdgeInsets.only(top: 20, bottom: 20),
-                              child: Row(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  SizedBox(
-                                    height: 20,
-                                  ),
-                                  Image.network(
-                                    data["gambar"],
-                                    height: 250,
-                                    width: 250,
-                                  ),
-                                  SizedBox(height: 20),
-                                  Container(
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          " ${data["nama_barang"]}",
-                                          style: TextStyle(
-                                              fontSize: 21,
-                                              fontWeight: FontWeight.bold,
-                                              fontStyle: FontStyle.italic),
-                                        ),
-                                        Text(
-                                          " Stock: ${data["stock"]}",
-                                          style: TextStyle(
-                                              fontSize: 17,
-                                              fontWeight: FontWeight.w600,
-                                              fontStyle: FontStyle.italic),
-                                        ),
-                                        Text(
-                                          " ${DateFormat.yMMMEd().format(data["tgl_masuk"].toDate())}",
-                                          style: TextStyle(
-                                              fontSize: 17,
-                                              fontWeight: FontWeight.w600,
-                                              fontStyle: FontStyle.italic),
-                                        ),
-                                        SizedBox(height: 30)
-                                      ],
+                            return Wrap(children: [
+                              Container(
+                                margin: EdgeInsets.fromLTRB(4, 5, 4, 20),
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10),
+                                  color: Colors.amber,
+                                ),
+                                padding: EdgeInsets.only(top: 20, bottom: 20),
+                                child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    SizedBox(
+                                      height: 20,
                                     ),
-                                  ),
-                                ],
+                                    Padding(
+                                      padding: const EdgeInsets.fromLTRB(
+                                          15, 0, 0, 0),
+                                      child: Container(
+                                        height: 150,
+                                        width: 150,
+                                        decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(15),
+                                            image: DecorationImage(
+                                                image: NetworkImage(
+                                                    data["gambar"]))),
+                                      ),
+                                    ),
+                                    SizedBox(height: 20),
+                                    Container(
+                                      child: Padding(
+                                        padding: const EdgeInsets.fromLTRB(
+                                            20, 0, 0, 0),
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              " ${data["nama_barang"]}",
+                                              style: TextStyle(
+                                                  fontSize: 21,
+                                                  fontWeight: FontWeight.bold,
+                                                  fontStyle: FontStyle.italic),
+                                            ),
+                                            Text(
+                                              " Stock: ${data["stock"]}",
+                                              style: TextStyle(
+                                                  fontSize: 17,
+                                                  fontWeight: FontWeight.w600,
+                                                  fontStyle: FontStyle.italic),
+                                            ),
+                                            Text(
+                                              " ${data["tgl_masuk"]}",
+                                              style: TextStyle(
+                                                  fontSize: 17,
+                                                  fontWeight: FontWeight.w600,
+                                                  fontStyle: FontStyle.italic),
+                                            ),
+                                            SizedBox(height: 30)
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
-                            );
+                            ]);
                           },
                         ),
                       );
@@ -238,9 +265,7 @@ class _HomeUserState extends State<HomeUser> {
                   elevation: 7.0,
                   child: GestureDetector(
                     onTap: () {
-                      setState(() {
-                    
-                      });
+                      setState(() {});
                     },
                     child: Center(
                       child: Text(
@@ -269,10 +294,7 @@ class _HomeUserState extends State<HomeUser> {
             elevation: 7.0,
             child: GestureDetector(
               onTap: () {
-                setState(() {
-                
-               
-                });
+                setState(() {});
               },
               child: Center(
                 child: Text(
@@ -293,7 +315,7 @@ class _HomeUserState extends State<HomeUser> {
   void _selectItem(String name) {
     Navigator.pop(context);
     setState(() {
-      
+      _selectedItem = name;
     });
   }
 }

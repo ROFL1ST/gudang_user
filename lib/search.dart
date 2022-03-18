@@ -59,44 +59,53 @@ class _SearchState extends State<Search> {
                             SizedBox(
                               height: 20,
                             ),
-                            Image.network(
-                              data["gambar"],
-                              height: 250,
-                              width: 250,
+                            Padding(
+                              padding: const EdgeInsets.fromLTRB(15, 0, 0, 0),
+                              child: Container(
+                                height: 150,
+                                width: 150,
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(15),
+                                    image: DecorationImage(
+                                        image: NetworkImage(data["gambar"]))),
+                              ),
                             ),
                             SizedBox(height: 20),
                             Container(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    " ${data["nama_barang"]}",
-                                    style: TextStyle(
-                                        fontSize: 21,
-                                        fontWeight: FontWeight.bold,
-                                        fontStyle: FontStyle.italic),
-                                  ),
-                                  Text(
-                                    " Stock: ${data["stock"]}",
-                                    style: TextStyle(
-                                        fontSize: 17,
-                                        fontWeight: FontWeight.w600,
-                                        fontStyle: FontStyle.italic),
-                                  ),
-                                  Text(
-                                    " ${DateFormat.yMMMEd().format(data["tgl_masuk"].toDate())}",
-                                    style: TextStyle(
-                                        fontSize: 17,
-                                        fontWeight: FontWeight.w600,
-                                        fontStyle: FontStyle.italic),
-                                  ),
-                                  SizedBox(height: 30)
-                                ],
+                              child: Padding(
+                                padding: const EdgeInsets.fromLTRB(20, 0, 0, 0),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      " ${data["nama_barang"]}",
+                                      style: TextStyle(
+                                          fontSize: 21,
+                                          fontWeight: FontWeight.bold,
+                                          fontStyle: FontStyle.italic),
+                                    ),
+                                    Text(
+                                      " Stock: ${data["stock"]}",
+                                      style: TextStyle(
+                                          fontSize: 17,
+                                          fontWeight: FontWeight.w600,
+                                          fontStyle: FontStyle.italic),
+                                    ),
+                                    Text(
+                                      " ${data["tgl_masuk"]}",
+                                      style: TextStyle(
+                                          fontSize: 17,
+                                          fontWeight: FontWeight.w600,
+                                          fontStyle: FontStyle.italic),
+                                    ),
+                                    SizedBox(height: 30)
+                                  ],
+                                ),
                               ),
                             ),
                           ],
                         ),
-                      ),
+                      )
                     ],
                   );
                 },
